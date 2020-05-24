@@ -2,7 +2,10 @@
 
 # dependencies
 /node_modules
+/client/node_modules
+/node_modules/
 /.pnp
+/notebooks/
 .pnp.js
 
 # testing
@@ -13,7 +16,9 @@
 
 # misc
 .DS_Store
+.env
 .env.local
+.env.development
 .env.development.local
 .env.test.local
 .env.production.local

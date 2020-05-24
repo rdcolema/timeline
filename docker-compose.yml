@@ -1,0 +1,36 @@
+version: "3.4"
+
+x-common-variables: &common-variables
+  MYSQL_USER: ${MYSQL_USER}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  MYSQL_DATABASE: ${MYSQL_DATABASE}
+  REACT_APP_MAPBOX_TOKEN: ${REACT_APP_MAPBOX_TOKEN}
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      <<: *common-variables
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3308:3306
+    restart: unless-stopped
+    volumes:
+      - ./db/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
+      - mysql-data-volume:/var/lib/mysql
+  client:
+    build: ./client
+    environment:
+      <<: *common-variables
+      NODE_PATH: src
+    expose:
+      - 3000
+    ports:
+      - 3001:3000
+    volumes:
+      - ./client/src:/app/src
+    stdin_open: true
+    command: npm start
+volumes:
+  mysql-data-volume:

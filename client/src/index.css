@@ -1,0 +1,18 @@
+
+body {
+	font-family: "Helvetica Neue";
+	margin-top: 1%;
+	margin-left: 6%;
+	margin-right: 6%;
+	background-color: rgb(21, 32, 43);
+    color: #ccc;
+}
+
+#map-container {
+	margin-top: 1%;
+}
+
+.range-slider { 
+	margin-top: 1%;
+	max-width:100%;
+}
