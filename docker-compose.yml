@@ -5,6 +5,7 @@ x-common-variables: &common-variables
   MYSQL_PASSWORD: ${MYSQL_PASSWORD}
   MYSQL_DATABASE: ${MYSQL_DATABASE}
   REACT_APP_MAPBOX_TOKEN: ${REACT_APP_MAPBOX_TOKEN}
+  REACT_APP_SERVER_PORT: ${REACT_APP_SERVER_PORT}
 
 services:
   mysql:
@@ -31,6 +32,22 @@ services:
     volumes:
       - ./client/src:/app/src
     stdin_open: true
+    command: npm start
+  server:
+    build: ./server
+    depends_on:
+      - mysql
+    expose:
+      - 8003
+    environment:
+      <<: *common-variables
+      MYSQL_HOST_IP: mysql
+    ports:
+      - 8003:8003
+    volumes:
+      - ./server:/app
+    links:
+      - mysql
     command: npm start
 volumes:
   mysql-data-volume:
