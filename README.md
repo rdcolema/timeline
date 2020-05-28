@@ -2,4 +2,4 @@
 
 Mapping historical Wikipedia events geographically and temporally with React
 
-<img src="./stattic/sample.jpg" />
+<img src="https://github.com/rdcolema/timeline/blob/master/assets/sample.jpg" />
