@@ -1,4 +1,3 @@
-
 body {
 	font-family: "Helvetica Neue";
 	margin-top: 1%;
@@ -15,4 +14,12 @@ body {
 .range-slider { 
 	margin-top: 1%;
 	max-width:100%;
+}
+
+.event-info-popup {
+	padding: 20px;
+}
+
+.event-info-popup-title {
+	color: black;
 }

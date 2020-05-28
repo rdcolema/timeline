@@ -20,10 +20,12 @@ app.listen(process.env.REACT_APP_SERVER_PORT, () => {
 
 
 // List wines
-app.get('/events', (req, res) => {
+app.get('/events/:year', (req, res) => {
+
+  const year = req.params.year;
 
   pool.query(`
-    SELECT * FROM timeline_event LIMIT 10`, 
+    SELECT * FROM timeline_event WHERE date LIKE '${year}%'`, 
     (err, results) => {
       if (err) {
         console.log(err);
