@@ -43,7 +43,7 @@ services:
       <<: *common-variables
       MYSQL_HOST_IP: mysql
     ports:
-      - ${SERVER_PORT}:${REACT_APP_SERVER_PORT}
+      - ${REACT_APP_SERVER_PORT}:${REACT_APP_SERVER_PORT}
     volumes:
       - ./server:/app
     links:

@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 import requests
 import pandas as pd
@@ -82,16 +83,29 @@ def format_event_df(event_df):
 if __name__ == "__main__":
 	logger.debug("Beginning refresh...")
 
-	logger.debug("Connecting to timelinedb mysql database...")
-	# timelinedb connection
-	engine = create_engine("mysql://robert:{passwd}@mysql:{port}/{db}?charset=utf8".format(
-		passwd=os.environ.get("MYSQL_PASSWORD", ""), 
-		port=os.environ.get("MYSQL_PORT", 3306),
-		host=os.environ.get("MYSQL_HOST", "localhost"),
-		db=os.environ.get("MYSQL_DATABASE"),
-		))
+	retries = 5
+	connected = False
 
-	con = engine.connect()
+	# timelinedb connection
+	logger.debug("Connecting to timelinedb mysql database...")
+	while retries and not connected:
+		try:
+			engine = create_engine("mysql://robert:{passwd}@{host}:{port}/{db}?charset=utf8".format(
+				passwd=os.environ.get("MYSQL_PASSWORD", ""), 
+				port=os.environ.get("MYSQL_PORT", 3306),
+				host=os.environ.get("MYSQL_HOST_IP", "localhost"),
+				db=os.environ.get("MYSQL_DATABASE"),
+				))
+
+			con = engine.connect()
+			connected = True
+		except:
+			logger.debug("Mysql connection failed, retrying...")
+			time.sleep(10)
+			retries -= 1
+
+	if not connected:
+		raise Exception("Unable to connect to mysql, exiting.")
 
 	logger.debug("Connection established.")
 
