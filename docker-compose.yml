@@ -15,7 +15,7 @@ services:
       MYSQL_HOST: ${MYSQL_HOST}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - 3308:3306
+      - ${MYSQL_PORT}:3306
     restart: unless-stopped
     volumes:
       - ./db/ddl.sql:/docker-entrypoint-initdb.d/ddl.sql
@@ -28,7 +28,7 @@ services:
     expose:
       - 3000
     ports:
-      - 3001:3000
+      - ${CLIENT_PORT}:3000
     volumes:
       - ./client/src:/app/src
     stdin_open: true
@@ -38,16 +38,16 @@ services:
     depends_on:
       - mysql
     expose:
-      - 8003
+      - ${REACT_APP_SERVER_PORT}
     environment:
       <<: *common-variables
       MYSQL_HOST_IP: mysql
     ports:
-      - 8003:8003
+      - ${SERVER_PORT}:${REACT_APP_SERVER_PORT}
     volumes:
       - ./server:/app
     links:
       - mysql
-    command: npm start
+    command: python3 refresh_events.py && npm start
 volumes:
   mysql-data-volume:
