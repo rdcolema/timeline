@@ -33,4 +33,4 @@ Then run:
 
 This should build the docker images and run the containers locally for the server, the client, and the mysql database. 
 
-Finally navigate to "http://localhost:<CLIENT_PORT>/" to view the running app, replacing <CLIENT_PORT> with the value used for that variable.
+Finally navigate to "localhost:<CLIENT_PORT>" in your browser to view the running app, replacing <CLIENT_PORT> with the value used for that variable.
