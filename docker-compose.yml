@@ -48,6 +48,6 @@ services:
       - ./server:/app
     links:
       - mysql
-    command: python3 refresh_events.py && npm start
+    command: sh -c "python3 refresh_events.py && npm start"
 volumes:
   mysql-data-volume:

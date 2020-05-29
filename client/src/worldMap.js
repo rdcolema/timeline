@@ -80,7 +80,6 @@ class WorldMap extends Component {
 
   componentDidMount() {
     this.updateEvents(this.state.year);
-    console.log(this.state.events);
   }
 
   handleViewportChange = viewport => {
@@ -98,7 +97,7 @@ class WorldMap extends Component {
   }
 
   updateEvents = (year) => {
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/events/${year}`)
+    axios.get(`http://127.0.0.1:${process.env.REACT_APP_SERVER_PORT}/events/${year}`)
       .then(res => {
         this.setState({
           events: res.data
