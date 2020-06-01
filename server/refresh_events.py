@@ -83,36 +83,23 @@ def format_event_df(event_df):
 if __name__ == "__main__":
 	logger.debug("Beginning refresh...")
 
-	retries = 5
-	connected = False
-
 	# timelinedb connection
 	logger.debug("Connecting to timelinedb mysql database...")
-	while retries and not connected:
-		try:
-			engine = create_engine("mysql://robert:{passwd}@{host}:{port}/{db}?charset=utf8".format(
-				passwd=os.environ.get("MYSQL_PASSWORD", ""), 
-				port=os.environ.get("MYSQL_PORT", 3306),
-				host=os.environ.get("MYSQL_HOST_IP", "localhost"),
-				db=os.environ.get("MYSQL_DATABASE"),
-				))
+	engine = create_engine("mysql://robert:{passwd}@{host}:{port}/{db}?charset=utf8".format(
+		passwd=os.environ.get("MYSQL_PASSWORD", ""), 
+		port=os.environ.get("MYSQL_PORT", 3306),
+		host=os.environ.get("MYSQL_HOST_IP", "localhost"),
+		db=os.environ.get("MYSQL_DATABASE"),
+		))
 
-			con = engine.connect()
-			connected = True
-		except:
-			logger.debug("Mysql connection failed, retrying...")
-			time.sleep(10)
-			retries -= 1
-
-	if not connected:
-		raise Exception("Unable to connect to mysql, exiting.")
-
+	con = engine.connect()
 	logger.debug("Connection established.")
 
-	event_df = get_events()
-	event_df = format_event_df(event_df)
-
 	try:
+		# Fetch events
+		event_df = get_events()
+		event_df = format_event_df(event_df)
+
 		# Clear out existing mysql table
 		logger.debug("Truncating timeline_event table...")
 		con.execute("""DELETE FROM timeline_event""")
@@ -126,4 +113,3 @@ if __name__ == "__main__":
 		con.close()
 
 	logger.debug("Refresh completed.")
-

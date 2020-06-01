@@ -4,7 +4,6 @@ import WorldMap from './worldMap'
 import './index.css';
 
 
-
 ReactDOM.render(
   <WorldMap />,
   document.getElementById('root')
