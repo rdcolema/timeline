@@ -25,7 +25,7 @@ app.get('/events/:year', (req, res) => {
   const year = req.params.year;
 
   pool.query(`
-    SELECT * FROM timeline_event WHERE date LIKE '${year}%'`, 
+    SELECT * FROM timeline_event WHERE date LIKE ?`,  [year + "%"], 
     (err, results) => {
       if (err) {
         console.log(err);
