@@ -19,7 +19,7 @@ app.listen(process.env.REACT_APP_SERVER_PORT, () => {
 });
 
 
-// List wines
+// List events
 app.get('/events/:year', (req, res) => {
 
   const year = req.params.year;
