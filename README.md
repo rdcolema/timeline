@@ -1,6 +1,6 @@
 # Timeline
 
-Mapping historical Wikipedia events geographically and chronologically with React
+Mapping historical Wikipedia events geographically and chronologically with React. See <a href="https://medium.com/@rdcolema7/creating-interactive-historical-maps-with-react-mapbox-and-wikipedia-26be1726a3a7">this post<a/> for a more in-depth overview. 
 
 <img src="https://github.com/rdcolema/timeline/blob/master/assets/sample.jpg" />
 
