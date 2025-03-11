@@ -16,7 +16,7 @@
     "react-jvectormap": "0.0.16",
     "react-map-gl": "^5.2.3",
     "react-scripts": "5.0.1",
-    "axios": "^1.7.4"
+    "axios": "^1.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
