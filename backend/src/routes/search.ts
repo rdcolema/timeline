@@ -13,7 +13,7 @@ searchRouter.get('/', (req, res) => {
   const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
   const db = getDb();
 
-  const sanitized = q.replace(/[^\w\s]/g, '').trim();
+  const sanitized = q.replace(/["*:()]/g, '').trim();
   if (!sanitized) {
     res.json({ results: [], total: 0 });
     return;

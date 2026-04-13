@@ -1,5 +1,6 @@
 import { getAI } from './ai';
 import { getDb } from './db';
+import { getDefaultRange } from './lib/range';
 
 interface GeneratedEvent {
   name: string;
@@ -55,14 +56,7 @@ const GEOGRAPHIC_REFS: { name: string; lat: number; lng: number }[] = [
   { name: 'Kyoto', lat: 35.0, lng: 135.8 },
 ];
 
-function getDefaultRange(year: number): { start: number; end: number } {
-  if (year < -1000) return { start: year - 150, end: year + 150 };
-  if (year < -500) return { start: year - 75, end: year + 75 };
-  if (year < 500) return { start: year - 50, end: year + 50 };
-  if (year < 1500) return { start: year - 30, end: year + 30 };
-  if (year < 1800) return { start: year - 15, end: year + 15 };
-  return { start: year - 10, end: year + 10 };
-}
+
 
 export function makeRegionKey(lat: number, lng: number, yearStart: number, yearEnd: number): string {
   const gridLat = Math.floor(lat / GRID_SIZE) * GRID_SIZE;
@@ -206,15 +200,21 @@ Return ONLY the JSON array. No markdown fences, no commentary.`;
   const margin = 2; // allow 2° outside the grid for border events
   const valid = events.filter((e) => {
     if (!e.name || !e.description || !e.date_display) return false;
-    if (typeof e.year !== 'number' || e.year < -3500 || e.year > 2026) return false;
+    if (typeof e.year !== 'number' || e.year < -3000 || e.year > 2025) return false;
     if (typeof e.latitude !== 'number' || e.latitude < -90 || e.latitude > 90) return false;
     if (typeof e.longitude !== 'number' || e.longitude < -180 || e.longitude > 180) return false;
     // Reject events outside the grid cell (catches LLM coordinate hallucinations)
     if (e.latitude < gridLat - margin || e.latitude > gridLat + GRID_SIZE + margin) return false;
     if (e.longitude < gridLng - margin || e.longitude > gridLng + GRID_SIZE + margin) return false;
     if (!e.location_name || typeof e.location_name !== 'string') e.location_name = '';
-    if (!VALID_CATEGORIES.includes(e.category)) e.category = 'other';
-    if (typeof e.significance !== 'number' || e.significance < 1 || e.significance > 10) e.significance = 5;
+    if (!VALID_CATEGORIES.includes(e.category)) {
+      console.warn(`  ⚠ Coerced category "${e.category}" → "other" for "${e.name}"`);
+      e.category = 'other';
+    }
+    if (typeof e.significance !== 'number' || e.significance < 1 || e.significance > 10) {
+      console.warn(`  ⚠ Coerced significance ${e.significance} → 5 for "${e.name}"`);
+      e.significance = 5;
+    }
     if (!['exact', 'city', 'region'].includes(e.location_precision)) e.location_precision = 'city';
     return true;
   });

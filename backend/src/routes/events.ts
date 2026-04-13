@@ -1,16 +1,8 @@
 import { Router } from 'express';
 import { getDb } from '../db';
+import { getDefaultRange } from '../lib/range';
 
 export const eventsRouter = Router();
-
-function getDefaultRange(year: number): number {
-  if (year < -1000) return 150;
-  if (year < -500) return 75;
-  if (year < 500) return 50;
-  if (year < 1500) return 30;
-  if (year < 1800) return 15;
-  return 10;
-}
 
 eventsRouter.get('/', (req, res) => {
   const year = parseInt(req.query.year as string);
@@ -19,7 +11,8 @@ eventsRouter.get('/', (req, res) => {
     return;
   }
 
-  const range = req.query.range ? parseInt(req.query.range as string) : getDefaultRange(year);
+  const defaultRange = getDefaultRange(year);
+  const range = req.query.range ? parseInt(req.query.range as string) : (defaultRange.end - defaultRange.start) / 2;
   const limit = Math.min(req.query.limit ? parseInt(req.query.limit as string) || 500 : 500, 1000);
   const categories = req.query.category ? (req.query.category as string).split(',') : null;
   const boundsStr = req.query.bounds as string | undefined;

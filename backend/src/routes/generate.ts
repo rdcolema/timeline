@@ -16,6 +16,11 @@ generateRouter.post('/', async (req, res) => {
     return;
   }
 
+  if (year < -3000 || year > 2025) {
+    res.status(400).json({ error: 'Year must be between -3000 and 2025' });
+    return;
+  }
+
   try {
     const events = await generateForRegion({ lat, lng, year });
 
