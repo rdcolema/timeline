@@ -1,37 +1,61 @@
 # Timeline
 
-Mapping historical Wikipedia events geographically and chronologically with React. See <a href="https://medium.com/@rdcolema7/creating-interactive-historical-maps-with-react-mapbox-and-wikipedia-26be1726a3a7">this post<a/> for a more in-depth overview. 
+Interactive historical world map. Click anywhere on the map to generate historical events for that region and time period using Claude. Events are cached in SQLite so the same region/era loads instantly on subsequent visits.
 
-<img src="https://github.com/rdcolema/timeline/blob/master/assets/sample.jpg" />
+Built with MapLibre GL JS, React, Express, and the Anthropic API.
 
-## Installation
+## Prerequisites
 
-### Requires:
-docker-compose and a mapbox account w/ API token
+- Node.js 18+
+- An [Anthropic API key](https://console.anthropic.com/)
 
-### Local Run:
-After cloning the directory, navigate to the project root and create a .env file with the following key/value pairs:
+## Setup
 
 ```
-REACT_APP_MAPBOX_TOKEN = your mapbox api token
+git clone <repo-url> && cd timeline
+npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
 
-REACT_APP_SERVER_PORT = port exposed by the server container
-CLIENT_PORT = port exposed by the client container
+cp .env.example .env
+# add your ANTHROPIC_API_KEY to .env
 
-MYSQL_USER = username for client to use when querying mysql db
-MYSQL_PASSWORD = secure password for client to use when querying mysql db
-MYSQL_DATABASE = timelinedb
-MYSQL_HOST = localhost
-MYSQL_ROOT_PASSWORD = secure password for root user in mysql container
-MYSQL_PORT = port exposed by mysql container
+npm run dev
 ```
 
-You may need to adjust some values in the "docker-compose.yml" file in the project root if there are any port conflicts in your environment or would like to connect to a different database.
+Opens at http://localhost:5173. The database is created automatically on first run.
 
-Then run: </br>
-`$ docker-compose build` </br>
-`$ docker-compose up -d`
+## How it works
 
-This should build the docker images and run the containers locally for the server, the client, and the mysql database.
+The map divides the world into 10-degree grid cells. When you click a location, the backend checks if that cell + time range has been generated before. If not, it calls Claude to produce historically accurate events for the region, validates the coordinates, and stores everything in SQLite. Future clicks in the same cell return cached results.
 
-Finally navigate to "localhost:<CLIENT_PORT>" in your browser to view the running app, replacing <CLIENT_PORT> with the value used for that variable.
+Each event has a name, date, coordinates, category, significance rating, and location precision (exact site, city, or region). Marker size and opacity on the map reflect these properties.
+
+You can also click any event and hit "Generate deeper analysis" for an AI-written narrative summary. Those are cached too.
+
+## Architecture
+
+```
+frontend/     Vite + React + TypeScript + Tailwind CSS 4 + Zustand
+backend/      Express + TypeScript + better-sqlite3 + Anthropic SDK
+data/
+  schema.sql  SQLite schema (auto-applied on first run)
+  geo/        Natural Earth country borders (110m, public domain)
+```
+
+Map tiles from [OpenFreeMap](https://openfreemap.org/) (no API key needed).
+
+## Scripts
+
+| Command | What it does |
+|---------|-------------|
+| `npm run dev` | Start frontend + backend concurrently |
+| `npm run init-db` | Reset the database |
+| `npm run build` | Production build of frontend |
+
+## Things I'd still like to do
+
+- Geocoding pass on generated events (verify LLM coordinates against a gazetteer)
+- Denser reference city grid for better coordinate anchoring in underserved regions
+- Event clustering at low zoom levels
+- Historical border overlays that change with the timeline

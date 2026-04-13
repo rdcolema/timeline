@@ -1,0 +1,66 @@
+@import "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap";
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #1a1d23;
+  --color-bg-secondary: #23272f;
+  --color-bg-tertiary: #2c313a;
+  --color-text-primary: #e8e6e1;
+  --color-text-secondary: #a8a49c;
+  --color-text-muted: #6b6860;
+  --color-accent-gold: #c9a84c;
+  --color-accent-gold-dim: #8a7434;
+  --color-accent-gold-bright: #e8c75a;
+
+  --color-cat-military: #c94a4a;
+  --color-cat-political: #4a7cc9;
+  --color-cat-cultural: #5cb85c;
+  --color-cat-scientific: #d4a843;
+  --color-cat-disaster: #9b59b6;
+  --color-cat-exploration: #2eaaa1;
+  --color-cat-religious: #c97a4a;
+  --color-cat-other: #7f8c8d;
+
+  --font-heading: 'Lora', serif;
+  --font-body: 'Source Sans 3', sans-serif;
+}
+
+/* MapLibre popup dark theme */
+.maplibregl-popup-content {
+  background: #23272f;
+  border: 1px solid #2c313a;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  padding: 12px 16px;
+}
+
+.maplibregl-popup-close-button {
+  color: #a8a49c;
+  font-size: 18px;
+  padding: 4px 8px;
+}
+
+.maplibregl-popup-close-button:hover {
+  color: #e8e6e1;
+  background: transparent;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: #23272f;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: #23272f;
+}
+
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: #23272f;
+}
+
+.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: #23272f;
+}
+
+.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: #23272f;
+}

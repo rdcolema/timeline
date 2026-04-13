@@ -1,0 +1,13 @@
+{
+  "name": "timeline",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "init-db": "cd backend && npm run init-db",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
