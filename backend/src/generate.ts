@@ -123,6 +123,21 @@ async function doGenerate(
 
   const client = getAI();
 
+  // Find existing events nearby to avoid generating duplicates
+  const db = getDb();
+  const existing = db.prepare(`
+    SELECT name FROM events
+    WHERE year BETWEEN ? AND ?
+      AND latitude BETWEEN ? AND ?
+      AND longitude BETWEEN ? AND ?
+    ORDER BY significance DESC
+    LIMIT 50
+  `).all(yearStart, yearEnd, gridLat - 5, gridLat + GRID_SIZE + 5, gridLng - 5, gridLng + GRID_SIZE + 5) as { name: string }[];
+
+  const existingText = existing.length > 0
+    ? `\nEvents already in the database for this region/era (DO NOT regenerate these):\n${existing.map(e => `- ${e.name}`).join('\n')}\n`
+    : '';
+
   // Build reference points for geographic anchoring
   const refs = GEOGRAPHIC_REFS.filter(r =>
     r.lat >= gridLat - 5 && r.lat <= gridLat + GRID_SIZE + 5 &&
@@ -137,7 +152,7 @@ async function doGenerate(
 - Temporally: between ${fmtYear(yearStart)} and ${fmtYear(yearEnd)}
 
 The user clicked near coordinates (${lat.toFixed(1)}°N, ${lng.toFixed(1)}°E). Focus events on this broader region.
-${refText}
+${refText}${existingText}
 If this region/period has fewer than ${targetCount} notable events, return however many are historically accurate — never invent fictional events. If you can identify more significant events, include up to ${targetCount + 10}.
 
 Return ONLY a JSON array with no other text. Each object must have exactly these fields:
@@ -166,6 +181,7 @@ The location_precision field indicates how confident the coordinates are:
 - "region": A broad process, trade route, migration, or cultural trend spanning a large area. Coordinates are a representative center point.
 
 REQUIREMENTS:
+- Each event must be a distinct historical occurrence. Do not split one event into multiple entries (e.g. "discover radium" and "isolate radium" are one event).
 - Category balance: include multiple categories, not just battles.
 - Include cultural, scientific, religious events where historically present.
 - All events must be real, documented historical events.
@@ -224,9 +240,8 @@ Return ONLY the JSON array. No markdown fences, no commentary.`;
 
   console.log(`  ✅ Parsed ${valid.length}/${events.length} valid events`);
 
-  const db = getDb();
   const insert = db.prepare(`
-    INSERT INTO events (name, description, date_display, year, location_name, latitude, longitude, category, significance, location_precision, region_key)
+    INSERT OR IGNORE INTO events (name, description, date_display, year, location_name, latitude, longitude, category, significance, location_precision, region_key)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
 

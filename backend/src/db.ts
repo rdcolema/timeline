@@ -32,6 +32,20 @@ export function getDb(): Database.Database {
     if (!colNames.has('location_name')) {
       db.exec("ALTER TABLE events ADD COLUMN location_name TEXT NOT NULL DEFAULT ''");
     }
+
+    // Add unique index to prevent duplicate events from overlapping grid cells
+    // First, remove existing duplicates (keep the one with the lowest id)
+    const hasIndex = db.prepare(
+      "SELECT 1 FROM sqlite_master WHERE type='index' AND name='idx_events_name_year'"
+    ).get();
+    if (!hasIndex) {
+      db.exec(`
+        DELETE FROM events WHERE id NOT IN (
+          SELECT MIN(id) FROM events GROUP BY name, year
+        )
+      `);
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_events_name_year ON events(name, year)');
+    }
   }
   return db;
 }

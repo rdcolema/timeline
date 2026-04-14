@@ -15,10 +15,14 @@ export function EventPopup() {
   const selectEvent = useEventStore((s) => s.selectEvent);
   const popupRef = useRef<maplibregl.Popup | null>(null);
 
+  const closedByEffect = useRef(false);
+
   useEffect(() => {
     if (popupRef.current) {
+      closedByEffect.current = true;
       popupRef.current.remove();
       popupRef.current = null;
+      closedByEffect.current = false;
     }
 
     if (!map || !selectedEvent) return;
@@ -45,11 +49,15 @@ export function EventPopup() {
       .setHTML(html)
       .addTo(map);
 
-    popup.on('close', () => selectEvent(null));
+    popup.on('close', () => {
+      if (!closedByEffect.current) selectEvent(null);
+    });
     popupRef.current = popup;
 
     return () => {
+      closedByEffect.current = true;
       popup.remove();
+      closedByEffect.current = false;
     };
   }, [map, selectedEvent, selectEvent]);
 
