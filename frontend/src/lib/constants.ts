@@ -36,7 +36,7 @@ export const CATEGORY_LABELS: Record<EventCategory, string> = {
 export const ALL_CATEGORIES: EventCategory[] = Object.keys(CATEGORY_COLORS) as EventCategory[];
 
 export const MIN_YEAR = -3000;
-export const MAX_YEAR = 2025;
+export const MAX_YEAR = 2030;
 
 export const MAP_STYLES = {
   liberty: 'https://tiles.openfreemap.org/styles/liberty',

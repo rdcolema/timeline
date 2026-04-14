@@ -6,8 +6,8 @@ describe('sliderToYear', () => {
     expect(sliderToYear(0)).toBe(-3000);
   });
 
-  it('maps 1 to 2025', () => {
-    expect(sliderToYear(1)).toBe(2025);
+  it('maps 1 to 2030', () => {
+    expect(sliderToYear(1)).toBe(2030);
   });
 
   it('clamps below 0', () => {
@@ -15,7 +15,7 @@ describe('sliderToYear', () => {
   });
 
   it('clamps above 1', () => {
-    expect(sliderToYear(1.5)).toBe(2025);
+    expect(sliderToYear(1.5)).toBe(2030);
   });
 
   it('maps midpoints monotonically', () => {
@@ -32,12 +32,12 @@ describe('yearToSlider', () => {
     expect(yearToSlider(-3000)).toBe(0);
   });
 
-  it('maps 2025 to 1', () => {
-    expect(yearToSlider(2025)).toBe(1);
+  it('maps 2030 to 1', () => {
+    expect(yearToSlider(2030)).toBe(1);
   });
 
   it('roundtrips with sliderToYear', () => {
-    const years = [-3000, -1000, 0, 500, 1200, 1600, 1850, 1950, 2025];
+    const years = [-3000, -1000, 0, 500, 1200, 1600, 1850, 1950, 2030];
     for (const y of years) {
       const pos = yearToSlider(y);
       const back = sliderToYear(pos);

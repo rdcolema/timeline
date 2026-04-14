@@ -36,7 +36,7 @@ export function MapContainer() {
     });
     m.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-    m.on('moveend', () => {
+    const updateBounds = () => {
       const b = m.getBounds();
       setBounds({
         sw_lat: b.getSouth(),
@@ -44,9 +44,14 @@ export function MapContainer() {
         ne_lat: b.getNorth(),
         ne_lng: b.getEast(),
       });
-    });
+    };
 
-    m.on('load', () => setMap(m));
+    m.on('moveend', updateBounds);
+
+    m.on('load', () => {
+      updateBounds();
+      setMap(m);
+    });
 
     return () => { m.remove(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps

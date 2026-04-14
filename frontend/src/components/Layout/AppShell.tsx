@@ -6,11 +6,15 @@ import { YearDisplay } from '../Timeline/YearDisplay';
 import { EraPresets } from '../Timeline/EraPresets';
 import { useEvents } from '../../hooks/useEvents';
 
-export function AppShell() {
+function EventsLoader() {
   useEvents();
+  return null;
+}
 
+export function AppShell() {
   return (
     <div className="h-screen w-screen flex flex-col bg-bg-primary font-body text-text-primary overflow-hidden">
+      <EventsLoader />
       <header className="h-12 flex items-center justify-between px-4 border-b border-bg-tertiary shrink-0">
         <h1 className="font-heading text-xl text-accent-gold tracking-wide">Timeline</h1>
         <MapControls />

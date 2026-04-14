@@ -9,7 +9,7 @@ const BREAKPOINTS: [number, number][] = [
   [0.45, 1300],
   [0.60, 1700],
   [0.80, 1900],
-  [1.00, 2025],
+  [1.00, 2030],
 ];
 
 export function sliderToYear(position: number): number {

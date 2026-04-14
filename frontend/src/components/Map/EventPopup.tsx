@@ -6,7 +6,7 @@ import { CATEGORY_COLORS } from '../../lib/constants';
 import { getEraForYear } from '../../lib/yearScale';
 
 function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 export function EventPopup() {

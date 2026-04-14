@@ -16,8 +16,8 @@ generateRouter.post('/', async (req, res) => {
     return;
   }
 
-  if (year < -3000 || year > 2025) {
-    res.status(400).json({ error: 'Year must be between -3000 and 2025' });
+  if (year < -3000 || year > 2030) {
+    res.status(400).json({ error: 'Year must be between -3000 and 2030' });
     return;
   }
 

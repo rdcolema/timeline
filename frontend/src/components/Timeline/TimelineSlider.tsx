@@ -1,7 +1,7 @@
 import { useRef, useCallback } from 'react';
 import { useTimelineStore } from '../../stores/timelineStore';
 import { yearToSlider } from '../../lib/yearScale';
-import { ERAS } from '../../lib/constants';
+import { ERAS, MIN_YEAR, MAX_YEAR } from '../../lib/constants';
 
 const TICKS = [-3000, -500, 0, 500, 1000, 1500, 1800, 1900, 2000];
 
@@ -40,7 +40,7 @@ export function TimelineSlider() {
     if (e.key === 'ArrowLeft') delta = -(e.shiftKey ? 10 : e.metaKey || e.ctrlKey ? 100 : 1);
     if (delta !== 0) {
       e.preventDefault();
-      setYear(Math.max(-3000, Math.min(2025, year + delta)));
+      setYear(Math.max(MIN_YEAR, Math.min(MAX_YEAR, year + delta)));
     }
   }, [year, setYear]);
 
@@ -51,8 +51,8 @@ export function TimelineSlider() {
         className="relative h-4 cursor-pointer select-none touch-none"
         role="slider"
         tabIndex={0}
-        aria-valuemin={-3000}
-        aria-valuemax={2025}
+        aria-valuemin={MIN_YEAR}
+        aria-valuemax={MAX_YEAR}
         aria-valuenow={year}
         aria-valuetext={`Year ${year}`}
         onPointerDown={onPointerDown}

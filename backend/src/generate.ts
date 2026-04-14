@@ -200,7 +200,7 @@ Return ONLY the JSON array. No markdown fences, no commentary.`;
   const margin = 2; // allow 2° outside the grid for border events
   const valid = events.filter((e) => {
     if (!e.name || !e.description || !e.date_display) return false;
-    if (typeof e.year !== 'number' || e.year < -3000 || e.year > 2025) return false;
+    if (typeof e.year !== 'number' || e.year < -3000 || e.year > 2030) return false;
     if (typeof e.latitude !== 'number' || e.latitude < -90 || e.latitude > 90) return false;
     if (typeof e.longitude !== 'number' || e.longitude < -180 || e.longitude > 180) return false;
     // Reject events outside the grid cell (catches LLM coordinate hallucinations)
@@ -215,7 +215,10 @@ Return ONLY the JSON array. No markdown fences, no commentary.`;
       console.warn(`  ⚠ Coerced significance ${e.significance} → 5 for "${e.name}"`);
       e.significance = 5;
     }
-    if (!['exact', 'city', 'region'].includes(e.location_precision)) e.location_precision = 'city';
+    if (!['exact', 'city', 'region'].includes(e.location_precision)) {
+      console.warn(`  ⚠ Coerced precision "${e.location_precision}" → "city" for "${e.name}"`);
+      e.location_precision = 'city';
+    }
     return true;
   });
 

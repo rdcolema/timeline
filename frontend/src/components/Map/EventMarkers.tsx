@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useMap } from './MapContext';
 import { useEventStore } from '../../stores/eventStore';
 import { useMapStore } from '../../stores/mapStore';
@@ -25,23 +25,22 @@ export function EventMarkers() {
   const events = useEventStore((s) => s.events);
   const activeCategories = useEventStore((s) => s.activeCategories);
   const minSignificance = useEventStore((s) => s.minSignificance);
-  const selectEvent = useEventStore((s) => s.selectEvent);
-  const initialized = useRef(false);
 
-  const filtered = events.filter(
-    (e) => activeCategories.has(e.category) && e.significance >= minSignificance
+  const filtered = useMemo(
+    () => events.filter(
+      (e) => activeCategories.has(e.category) && e.significance >= minSignificance
+    ),
+    [events, activeCategories, minSignificance],
   );
 
+  // One-time layer + handler setup
   useEffect(() => {
     if (!map) return;
 
-    const addLayers = () => {
-      if (map.getSource('events-source')) {
-        (map.getSource('events-source') as maplibregl.GeoJSONSource).setData(buildGeoJSON(filtered));
-        return;
-      }
+    const setup = () => {
+      if (map.getSource('events-source')) return;
 
-      map.addSource('events-source', { type: 'geojson', data: buildGeoJSON(filtered) });
+      map.addSource('events-source', { type: 'geojson', data: buildGeoJSON([]) });
 
       const catColors: string[] = Object.entries(CATEGORY_COLORS).flatMap(
         ([cat, color]) => [cat, color]
@@ -91,8 +90,7 @@ export function EventMarkers() {
       map.on('click', 'events-layer', (e) => {
         const feature = e.features?.[0];
         if (!feature) return;
-        const id = feature.properties?.id;
-        // Use getState() to always get the latest events array
+        const id = Number(feature.properties?.id);
         const current = useEventStore.getState().events;
         const event = current.find((ev) => ev.id === id);
         if (event) useEventStore.getState().selectEvent(event);
@@ -104,24 +102,21 @@ export function EventMarkers() {
       map.on('mouseleave', 'events-layer', () => {
         map.getCanvas().style.cursor = useMapStore.getState().mode === 'generate' ? 'crosshair' : '';
       });
-
-      initialized.current = true;
     };
 
-    if (map.isStyleLoaded()) {
-      addLayers();
-    }
+    if (map.isStyleLoaded()) setup();
 
-    const onStyleLoad = () => {
-      initialized.current = false;
-      addLayers();
-    };
+    const onStyleLoad = () => setup();
     map.on('style.load', onStyleLoad);
+    return () => { map.off('style.load', onStyleLoad); };
+  }, [map]);
 
-    return () => {
-      map.off('style.load', onStyleLoad);
-    };
-  }, [map, filtered, selectEvent]);
+  // Update source data when filtered events change
+  useEffect(() => {
+    if (!map) return;
+    const src = map.getSource('events-source') as maplibregl.GeoJSONSource | undefined;
+    if (src) src.setData(buildGeoJSON(filtered));
+  }, [map, filtered]);
 
   return null;
 }
