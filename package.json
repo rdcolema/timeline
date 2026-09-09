@@ -8,6 +8,6 @@
     "start": "cd backend && npm run start"
   },
   "devDependencies": {
-    "concurrently": "^10.0.3"
+    "concurrently": "^10.0.4"
   }
 }
